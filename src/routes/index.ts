@@ -42,10 +42,10 @@ const router = createBrowserRouter([
                 path: '/blogs/:slug/edit'
             },
             {
-                path: '/comments'
+                path: 'comments'
             },
             {
-                path: '/users'
+                path: 'users'
             }
         ]
     },
