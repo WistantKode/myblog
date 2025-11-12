@@ -1,5 +1,5 @@
 /**
- * @copyright 2025 codewithsadee
+ * @copyright 2025 wistantkode
  * @license Apache-2.0
  */
 
