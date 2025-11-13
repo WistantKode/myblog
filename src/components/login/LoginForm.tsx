@@ -29,7 +29,7 @@ const formSchema = z.object({
         .string()
         .nonempty('Email is required')
         .max(50, 'Email must be less than 50 characters long')
-        .email('Invalid email address')
+        .email('Invalid email address'),
     password: z
         .string()
         .nonempty('Password is required')
