@@ -63,13 +63,16 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
             className={cn('flex flex-col gap-6',className)}
             {...props}
         >
-           <Card>
-               <CardContent>
+           <Card className={'overflow-hidden p-0'}>
+               <CardContent className={'grid p-0 md:grid-cols-12 gap-6 md:grid-cols-2'}>
                    <Form {... form}>
                        <form
-                           className=""
+                           className={'p-6 md:p-8'}
                            onSubmit={form.handleSubmit(onSubmit)}
                        >
+                           <div>
+
+                           </div>
                        </form>
                    </Form>
                </CardContent>

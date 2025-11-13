@@ -19,7 +19,7 @@ const router = createBrowserRouter([
                 index: true,
             },
             {
-                path: '/blogs'
+                path: 'blogs'
             },
             {
                 path: 'blogs/:slug'
@@ -30,16 +30,16 @@ const router = createBrowserRouter([
         path: '/admin',
         children: [
             {
-                path: '/dashboard',
+                path: 'dashboard',
             },
             {
-                path: '/blogs'
+                path: 'blogs'
             },
             {
-                path: '/blogs/create'
+                path: 'blogs/create'
             },
             {
-                path: '/blogs/:slug/edit'
+                path: 'blogs/:slug/edit'
             },
             {
                 path: 'comments'

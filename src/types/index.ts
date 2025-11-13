@@ -1,8 +1,3 @@
-/**
- * @copyright 2025 codewithsadee
- * @license Apache-2.0
- */
-
 export interface User {
     _id: string;
     username: string;
