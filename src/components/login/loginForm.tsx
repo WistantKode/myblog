@@ -58,6 +58,7 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
         console.log(values)
     } , [])
 
+    // @ts-ignore
     return (
         <div
             className={cn('flex flex-col gap-6',className)}
@@ -70,8 +71,51 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                            className={'p-6 md:p-8'}
                            onSubmit={form.handleSubmit(onSubmit)}
                        >
-                           <div>
+                           <div className={'flex flex-col gap-6'}>
+                               <div className={'flex flex-col items-center text-center'}>
+                                   <h1 className="text-2xl font-semibold">
+                                       {LOGIN_FORM.title}
+                                   </h1>
+                                   <p className={'text-muted-foreground text-balance'}>
+                                       {LOGIN_FORM.description}
+                                   </p>
+                               </div>
 
+                               <FormField
+                                   name={'email'}
+                                   control={form.control}
+                                   render={({field}) => (
+                                       <FormItem className={'grid gap-3'}>
+                                           <FormLabel>Email</FormLabel>
+                                           <FormControl>
+                                               <Input
+                                                   placeholder={'john@example'}
+                                                   {...field}
+                                               />
+                                           </FormControl>
+                                           <FormMessage/>
+                                       </FormItem>
+                                   )}
+                               />
+
+
+
+                               <FormField
+                                   name={'password'}
+                                   control={form.control}
+                                   render={({field}) => (
+                                       <FormItem className={'grid gap-3'}>
+                                           <FormLabel>Password</FormLabel>
+                                           <FormControl>
+                                               <Input
+                                                   placeholder={'Enter your secure password'}
+                                                   {...field}
+                                               />
+                                           </FormControl>
+                                           <FormMessage/>
+                                       </FormItem>
+                                   )}
+                               />
                            </div>
                        </form>
                    </Form>
