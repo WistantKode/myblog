@@ -3,7 +3,7 @@ import {z} from 'zod'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as React from "react";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {cn} from '@/lib/utils.ts'
 
 import {Button} from "@/components/ui/button.tsx";
@@ -63,7 +63,16 @@ export const SignupForm = ({className, ...props}: React.ComponentProps<'div'>) =
         }
     })
 
+    // handle server error response
+    useEffect(() => {
+        if (!signupResponse) return;
+        if (signupResponse.ok) {
+            navigate('/', {viewTransition: true});
+            return;
+        }
+    })
 
+    // handle of form submission
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         await fetcher.submit(values, {
             action: '/signup',

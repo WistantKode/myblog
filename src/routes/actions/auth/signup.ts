@@ -19,7 +19,7 @@ const signupAction: ActionFunction = async ({request}) => {
         return {
             ok: true,
             data: responseData,
-        } as AuthResponse<AuthResponse>
+        } as AuthResponse<AuthResponse>;
 
     } catch (err) {
         if (err instanceof AxiosError) {
