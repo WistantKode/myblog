@@ -1,8 +1,3 @@
-/**
- * @copyright 2025 codewithsadee
- * @license Apache-2.0
- */
-
 export interface User {
     _id: string;
     username: string;
@@ -94,11 +89,14 @@ export type ErrorCode =
 export type ValidationError = {
     code: ErrorCode;
     errors: Record<string, FieldValidationError>;
+    msg: string;
 };
 
 export type ErrorResponse = {
+    errors: ErrorCode;
+    msg: string;
+    path: ErrorCode;
     code: ErrorCode;
-    message: string;
 };
 
 export interface ActionResponse<T = unknown> {

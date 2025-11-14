@@ -1,5 +1,7 @@
-import { createBrowserRouter } from "react-router";
-import { Login } from "@/pages/auth/login";
+import {createBrowserRouter} from "react-router";
+import {Login} from "@/pages/auth/login";
+import {Signup} from "@/pages/auth/signup.tsx";
+import signupAction from "@/routes/actions/auth/signup";
 
 const router = createBrowserRouter([
     {
@@ -7,7 +9,9 @@ const router = createBrowserRouter([
         Component: Login,
     },
     {
-        path: '/signup'
+        path: '/signup',
+        Component: Signup,
+        action: signupAction,
     },
     {
         path: '/refresh-token'
@@ -19,7 +23,7 @@ const router = createBrowserRouter([
                 index: true,
             },
             {
-                path: '/blogs'
+                path: 'blogs'
             },
             {
                 path: 'blogs/:slug'
@@ -30,16 +34,16 @@ const router = createBrowserRouter([
         path: '/admin',
         children: [
             {
-                path: '/dashboard',
+                path: 'dashboard',
             },
             {
-                path: '/blogs'
+                path: 'blogs'
             },
             {
-                path: '/blogs/create'
+                path: 'blogs/create'
             },
             {
-                path: '/blogs/:slug/edit'
+                path: 'blogs/:slug/edit'
             },
             {
                 path: 'comments'
