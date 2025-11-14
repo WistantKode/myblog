@@ -4,15 +4,15 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as React from "react";
 import {useCallback, useEffect} from "react";
-import {cn} from '@/lib/utils.ts'
+import {cn} from '@/lib/utils'
 
-import {Button} from "@/components/ui/button.tsx";
-import {Card, CardContent} from "@/components/ui/card.tsx";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent} from "@/components/ui/card";
 import {Input} from "@/components/ui/input.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {InputPassword} from "@/components/auth/InputPassword.tsx";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
-import {Label} from "@/components/ui/label.tsx";
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import {Label} from "@/components/ui/label";
 
 import {signupBanner} from '@/assets'
 import {LoaderCircleIcon} from "lucide-react";
@@ -20,8 +20,8 @@ import {LoaderCircleIcon} from "lucide-react";
 import {Progress} from "@/components/ui/progress";
 
 
-import type {ActionResponse, AuthResponse, ErrorResponse, ValidationError} from "../../../types";
-import {passwordRules} from "@/components/auth/passwordRules";
+import type {ActionResponse, AuthResponse, ErrorResponse, ValidationError} from "@/types";
+import {passwordRules} from "@/lib/passwordRules.ts";
 import {toast} from "sonner";
 
 type SignupField = 'email' | 'password' | 'role';
