@@ -24,8 +24,6 @@ const loginAction: ActionFunction = async ({request}) => {
         if (err instanceof AxiosError) {
             return {
                 ok: false,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
                 err: err.response?.data
             } as ActionResponse;
         }
