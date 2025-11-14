@@ -15,6 +15,8 @@ import {InputPassword} from "@/components/auth/InputPassword.tsx";
 import {loginBanner} from '@/assets'
 import {LoaderCircleIcon} from "lucide-react";
 
+import {Progress} from "@/components/ui/progress";
+
 
 import type {ActionResponse, AuthResponse} from "../../../types";
 
@@ -47,6 +49,8 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
 
     const isLoading = fetcher.state !== 'idle';
 
+    const [progress, setProgress] = React.useState(0)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -54,6 +58,24 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
             password: '',
         }
     })
+    React.useEffect(() => {
+        const subscription = form.watch((values) => {
+            let count = 0;
+
+            if (formSchema.shape.email.safeParse(values.email).success) {
+                count += 1;
+            }
+
+            if (formSchema.shape.password.safeParse(values.password).success) {
+                count += 1;
+            }
+
+            setProgress((count / 2) * 100);
+        });
+
+        return () => subscription.unsubscribe();
+    }, [form]);
+
 
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         console.log(values)
@@ -114,6 +136,10 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                        </FormItem>
                                    )}
                                />
+                               <Progress
+                                   value={progress}
+                                   className={'w-full h-2'}
+                               />
 
                                <Button
                                    type="submit"
@@ -135,7 +161,7 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                    className={'underline underline-offset-4 hover:text-primary'}
                                    viewTransition
                                >
-                                   Sign up
+                                   {'   '}Sign up
                                </Link>
                            </div>
                        </form>
