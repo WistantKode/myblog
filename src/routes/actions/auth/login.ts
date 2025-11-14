@@ -1,13 +1,12 @@
 import {myblogApi} from "@/api";
-
 import type {ActionFunction} from "react-router";
 import {AxiosError} from 'axios'
 import type {ActionResponse, AuthResponse} from "@/types";
 
-const signupAction: ActionFunction = async ({request}) => {
+const loginAction: ActionFunction = async ({request}) => {
     const data = await request.json()
     try {
-        const response = await myblogApi.post('/auth/register', data, {
+        const response = await myblogApi.post('/auth/login', data, {
             withCredentials: true,
         });
         const responseData = response.data as AuthResponse;
@@ -33,4 +32,4 @@ const signupAction: ActionFunction = async ({request}) => {
         throw err;
     }
 }
-export default signupAction
+export default loginAction

@@ -3,7 +3,7 @@ import {z} from 'zod'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as React from "react";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {cn} from '@/lib/utils.ts'
 
 import {Button} from "@/components/ui/button.tsx";
@@ -18,16 +18,16 @@ import {LoaderCircleIcon} from "lucide-react";
 import {Progress} from "@/components/ui/progress";
 
 
-import type {ActionResponse, AuthResponse} from "../../../types";
-import {passwordRules} from "@/components/auth/passwordRules.ts";
+import type {ActionResponse, AuthResponse, ValidationError} from "@/types";
+import {passwordRules} from "@/components/auth/passwordRules";
 
-type LoginFieldName = 'email' | 'password';
+type LoginFieldName = 'email' | 'password' | 'role';
 
 
 const LOGIN_FORM = {
-    title: "Welcome back !",
-    description: "Login to your account wistant",
-    footerText: "You don't an account ?",
+    title: "Create an account",
+    description: "Enter your email below to create an account",
+    footerText: "Already have an account?",
 } as const;
 
 const formSchema = z.object({
@@ -39,7 +39,8 @@ const formSchema = z.object({
     password: z
         .string()
         .nonempty('Password is required')
-        .min(8, 'Password must be less than 50 characters long'),
+        .min(8, 'Password must be at least 8 characters long'),
+    role: z.enum(['user', 'admin']),
 });
 
 
@@ -56,14 +57,48 @@ export const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) =>
         defaultValues: {
             email: '',
             password: '',
+            role: 'user',
         }
     })
 
+    // handle server error response
+    useEffect(() => {
+        if (!loginResponse) return;
+        if (loginResponse.ok) {
+            navigate('/', {viewTransition: true});
+            return;
+        }
 
+        if (!loginResponse.err) return;
 
+        if (loginResponse.err.code !== 'ValidationError') {
+            const validationErrors = loginResponse.err as ValidationError;
+
+            Object.entries(validationErrors.errors).forEach((value) => {
+                const [, validationError] = value;
+                const loginField = validationError.path as LoginFieldName;
+
+                form.setError(
+                    loginField,
+                    {
+                        type: 'custom',
+                        message: validationError.msg,
+                    },
+                    {shouldFocus: true},
+                )
+            })
+        }
+
+    }, [loginResponse]);
+
+    // handle of form submission
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
-    } , [])
+        await fetcher.submit(values, {
+            action: '/login',
+            method: 'post',
+            encType: 'application/json',
+        });
+    }, [])
 
     return (
         <div
@@ -150,12 +185,6 @@ export const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) =>
                                        )
                                    }}
                                />
-
-
-                               {/*<Progress*/}
-                               {/*    value={progress}*/}
-                               {/*    className={'w-full h-2'}*/}
-                               {/*/>*/}
 
                                <Button
                                    type="submit"
