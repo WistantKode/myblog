@@ -11,7 +11,7 @@ const signupAction: ActionFunction = async ({request}) => {
             withCredentials: true,
         });
         const responseData = response.data as AuthResponse;
-        console.log(responseData)
+        // console.log(responseData)
 
         localStorage.setItem('accesToken', responseData.accessToken)
         localStorage.setItem('user', JSON.stringify(responseData.user));
