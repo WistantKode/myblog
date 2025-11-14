@@ -76,6 +76,14 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
         return () => subscription.unsubscribe();
     }, [form]);
 
+    const passwordRules = [
+        {test: (val: string) => val.length <= 50, label: "Max 50 characters"},
+        {test: (val: string) => /[A-Z]/.test(val), label: "At least one uppercase"},
+        {test: (val: string) => /[0-9]/.test(val), label: "At least one number"},
+        {test: (val: string) => val.length >= 8, label: "At least 8 characters"},
+    ]
+
+
 
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         console.log(values)
@@ -123,23 +131,55 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                <FormField
                                    name={'password'}
                                    control={form.control}
-                                   render={({field}) => (
-                                       <FormItem className={'grid gap-3'}>
-                                           <FormLabel>Password</FormLabel>
-                                           <FormControl>
-                                               <InputPassword
-                                                   placeholder={'Enter your secure password'}
-                                                   {...field}
-                                               />
-                                           </FormControl>
-                                           <FormMessage/>
-                                       </FormItem>
-                                   )}
+                                   render={({field}) => {
+                                       const passwordValue = form.watch('password') || ""
+                                       return (
+                                           <FormItem className={'grid gap-3'}>
+                                               <FormLabel>Password</FormLabel>
+                                               <FormControl>
+                                                   <InputPassword
+                                                       placeholder={'Enter your secure password'}
+                                                       {...field}
+                                                   />
+                                               </FormControl>
+                                               <FormMessage/>
+
+                                               {/* ← Affichage conditionnel */}
+                                               {passwordValue.length > 0 && (
+                                                   <div className="flex flex-col gap-1 mt-2">
+                                                       {passwordRules.map((rule, idx) => {
+                                                           const isValid = rule.test(passwordValue)
+                                                           return (
+                                                               <div key={idx}
+                                                                    className="flex items-center gap-2 text-sm">
+                                <span className={cn(
+                                    "w-4 h-4 flex items-center justify-center rounded-full border",
+                                    isValid ? "bg-green-500 border-green-500" : "bg-gray-200 border-gray-300"
+                                )}>
+                                    {isValid && "✓"}
+                                </span>
+                                                                   <span
+                                                                       className={isValid ? "text-green-600" : "text-muted-foreground"}>
+                                    {rule.label}
+                                </span>
+                                                               </div>
+                                                           )
+                                                       })}
+                                                       <Progress
+                                                           value={(passwordRules.filter(r => r.test(passwordValue)).length / passwordRules.length) * 100}
+                                                           className="mt-2 h-2"/>
+                                                   </div>
+                                               )}
+                                           </FormItem>
+                                       )
+                                   }}
                                />
-                               <Progress
-                                   value={progress}
-                                   className={'w-full h-2'}
-                               />
+
+
+                               {/*<Progress*/}
+                               {/*    value={progress}*/}
+                               {/*    className={'w-full h-2'}*/}
+                               {/*/>*/}
 
                                <Button
                                    type="submit"
