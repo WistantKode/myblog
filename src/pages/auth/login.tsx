@@ -1,4 +1,4 @@
-import LoginForm from "@/components/login/loginForm.tsx";
+import LoginForm from "@/components/auth/login/LoginForm.tsx";
 
 export const Login = () => {
     return (

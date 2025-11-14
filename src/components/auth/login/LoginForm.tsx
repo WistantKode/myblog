@@ -2,20 +2,22 @@ import {Link, useFetcher, useNavigate} from "react-router";
 import {z} from 'zod'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useCallback, useEffect} from "react";
+import * as React from "react";
+import {useCallback} from "react";
 import {cn} from '@/lib/utils.ts'
 
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {Form, FormControl, FormField, FormItem, FormMessage, FormLabel} from "@/components/ui/form.tsx";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {InputPassword} from "@/components/auth/InputPassword.tsx";
 
 import {loginBanner} from '@/assets'
 import {LoaderCircleIcon} from "lucide-react";
 
 
-import type {ActionResponse, AuthResponse, ValidationError} from "../../types";
-import * as React from "react";
+import type {ActionResponse, AuthResponse} from "../../../types";
+
 type LoginFieldName = 'email' | 'password';
 
 
@@ -43,8 +45,7 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
     const fetcher = useFetcher();
     const loginResponse = fetcher.data as ActionResponse<AuthResponse>;
 
-    const isSubmitting = fetcher.state === "submitting";
-    const isLoading = fetcher.state === "loading";
+    const isLoading = fetcher.state !== 'idle';
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -58,14 +59,13 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
         console.log(values)
     } , [])
 
-    // @ts-ignore
     return (
         <div
             className={cn('flex flex-col gap-6',className)}
             {...props}
         >
            <Card className={'overflow-hidden p-0'}>
-               <CardContent className={'grid p-0 md:grid-cols-12 gap-6 md:grid-cols-2'}>
+               <CardContent className={'grid p-0 gap-6 md:grid-cols-2'}>
                    <Form {... form}>
                        <form
                            className={'p-6 md:p-8'}
@@ -98,8 +98,6 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                    )}
                                />
 
-
-
                                <FormField
                                    name={'password'}
                                    control={form.control}
@@ -107,7 +105,7 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                        <FormItem className={'grid gap-3'}>
                                            <FormLabel>Password</FormLabel>
                                            <FormControl>
-                                               <Input
+                                               <InputPassword
                                                    placeholder={'Enter your secure password'}
                                                    {...field}
                                                />
@@ -116,11 +114,59 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                        </FormItem>
                                    )}
                                />
+
+                               <Button
+                                   type="submit"
+                                   className={'w-full'}
+                                   disabled={isLoading}
+                               >
+                                   {isLoading
+                                       &&
+                                       <LoaderCircleIcon className={'animate-spin'}/>
+                                   }
+                                   <span>Login</span>
+                               </Button>
+                           </div>
+
+                           <div className={'mt-4 text-center text-sm'}>
+                               {LOGIN_FORM.footerText}{''}
+                               <Link
+                                   to="/signup"
+                                   className={'underline underline-offset-4 hover:text-primary'}
+                                   viewTransition
+                               >
+                                   Sign up
+                               </Link>
                            </div>
                        </form>
                    </Form>
+
+                   <figure className={'bg-muted relative hidden md:block'}>
+                       <img
+                           src={loginBanner}
+                           alt={'Login image'}
+                           height={400}
+                           width={400}
+                           className="absolute inset-0 w-full h-full object-cover"
+                       />
+                   </figure>
                </CardContent>
            </Card>
+
+            <div
+                className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline-offset-4">
+                By clicking continue, you agree to our{'   '}
+                <a
+                    className={'underline underline-offset-4 hover:text-primary'}
+                    href="#">Terms of services
+                </a>{'   '}
+                and {'   '}
+                <a
+                    className={'underline underline-offset-4 hover:text-primary'}
+                    href="#">
+                    Privacy Policy
+                </a>
+            </div>
         </div>
     );
 };
