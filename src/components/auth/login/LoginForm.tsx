@@ -19,6 +19,7 @@ import {Progress} from "@/components/ui/progress";
 
 
 import type {ActionResponse, AuthResponse} from "../../../types";
+import {passwordRules} from "@/components/auth/passwordRules.ts";
 
 type LoginFieldName = 'email' | 'password';
 
@@ -42,14 +43,13 @@ const formSchema = z.object({
 });
 
 
-const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
+export const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
     const navigate = useNavigate();
     const fetcher = useFetcher();
     const loginResponse = fetcher.data as ActionResponse<AuthResponse>;
 
     const isLoading = fetcher.state !== 'idle';
 
-    const [progress, setProgress] = React.useState(0)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -58,30 +58,6 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
             password: '',
         }
     })
-    React.useEffect(() => {
-        const subscription = form.watch((values) => {
-            let count = 0;
-
-            if (formSchema.shape.email.safeParse(values.email).success) {
-                count += 1;
-            }
-
-            if (formSchema.shape.password.safeParse(values.password).success) {
-                count += 1;
-            }
-
-            setProgress((count / 2) * 100);
-        });
-
-        return () => subscription.unsubscribe();
-    }, [form]);
-
-    const passwordRules = [
-        {test: (val: string) => val.length <= 50, label: "Max 50 characters"},
-        {test: (val: string) => /[A-Z]/.test(val), label: "At least one uppercase"},
-        {test: (val: string) => /[0-9]/.test(val), label: "At least one number"},
-        {test: (val: string) => val.length >= 8, label: "At least 8 characters"},
-    ]
 
 
 
