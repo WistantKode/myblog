@@ -19,13 +19,15 @@ const signupAction: ActionFunction = async ({request}) => {
         return {
             ok: true,
             data: responseData,
-        } as AuthResponse<AuthResponse>;
+        } as ActionResponse<AuthResponse>;
 
     } catch (err) {
         if (err instanceof AxiosError) {
             return {
                 ok: false,
-                err: err.response?.data,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                err: err.response?.data
             } as ActionResponse;
         }
         throw err;
