@@ -21,7 +21,7 @@ import {Progress} from "@/components/ui/progress";
 
 
 import type {ActionResponse, AuthResponse, ErrorResponse, ValidationError} from "@/types";
-import {passwordRules} from "@/components/auth/passwordRules";
+import {passwordRules} from "@/lib/passwordRules.ts";
 import {toast} from "sonner";
 
 type SignupField = 'email' | 'password' | 'role';

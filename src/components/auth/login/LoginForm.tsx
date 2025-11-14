@@ -4,13 +4,13 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as React from "react";
 import {useCallback, useEffect} from "react";
-import {cn} from '@/lib/utils.ts'
+import {cn} from '@/lib/utils'
 
-import {Button} from "@/components/ui/button.tsx";
-import {Card, CardContent} from "@/components/ui/card.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
-import {InputPassword} from "@/components/auth/InputPassword.tsx";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {InputPassword} from "@/components/auth/InputPassword";
 
 import {loginBanner} from '@/assets'
 import {LoaderCircleIcon} from "lucide-react";
@@ -19,7 +19,7 @@ import {Progress} from "@/components/ui/progress";
 
 
 import type {ActionResponse, AuthResponse, ValidationError} from "@/types";
-import {passwordRules} from "@/components/auth/passwordRules";
+import {passwordRules} from "@/lib/passwordRules.ts";
 
 type LoginFieldName = 'email' | 'password' | 'role';
 
