@@ -20,8 +20,9 @@ import {LoaderCircleIcon} from "lucide-react";
 import {Progress} from "@/components/ui/progress";
 
 
-import type {ActionResponse, AuthResponse} from "../../../types";
+import type {ActionResponse, AuthResponse, ErrorResponse, ValidationError} from "../../../types";
 import {passwordRules} from "@/components/auth/passwordRules";
+import {toast} from "sonner";
 
 type SignupField = 'email' | 'password' | 'role';
 
@@ -70,7 +71,36 @@ export const SignupForm = ({className, ...props}: React.ComponentProps<'div'>) =
             navigate('/', {viewTransition: true});
             return;
         }
-    })
+
+        if (!signupResponse.err) return;
+
+        if (signupResponse.err.code !== 'AuthorizationError') {
+            const authorizationError = signupResponse.err as ErrorResponse;
+
+            toast.error(authorizationError.msg, {
+                position: "top-center",
+            });
+        }
+
+        if (signupResponse.err.code !== 'ValidationError') {
+            const validationErrors = signupResponse.err as ValidationError;
+
+            Object.entries(validationErrors.errors).forEach((value) => {
+                const [, validationError] = value;
+                const signupField = validationError.path as SignupField;
+
+                form.setError(
+                    signupField,
+                    {
+                        type: 'custom',
+                        message: validationError.msg,
+                    },
+                    {shouldFocus: true},
+                )
+            })
+        }
+
+    }, [signupResponse]);
 
     // handle of form submission
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
