@@ -16,7 +16,7 @@ const router = createBrowserRouter([
         action: signupAction,
     },
     {
-        path: '/refresh-token'
+        path: '/refresh-token',
     },
     {
         path: '/',
