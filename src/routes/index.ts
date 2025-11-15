@@ -1,16 +1,22 @@
-import { createBrowserRouter } from "react-router";
-import { Login } from "@/pages/auth/login";
+import {createBrowserRouter} from "react-router";
+import {Login} from "@/pages/auth/login";
+import {Signup} from "@/pages/auth/signup.tsx";
+import signupAction from "@/routes/actions/auth/signup";
+import loginAction from "@/routes/actions/auth/login";
 
 const router = createBrowserRouter([
     {
         path: "/login",
         Component: Login,
+        action: loginAction,
     },
     {
-        path: '/signup'
+        path: '/signup',
+        Component: Signup,
+        action: signupAction,
     },
     {
-        path: '/refresh-token'
+        path: '/refresh-token',
     },
     {
         path: '/',

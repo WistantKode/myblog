@@ -89,11 +89,14 @@ export type ErrorCode =
 export type ValidationError = {
     code: ErrorCode;
     errors: Record<string, FieldValidationError>;
+    msg: string;
 };
 
 export type ErrorResponse = {
+    errors: ErrorCode;
+    msg: string;
+    path: ErrorCode;
     code: ErrorCode;
-    message: string;
 };
 
 export interface ActionResponse<T = unknown> {

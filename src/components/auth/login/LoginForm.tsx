@@ -3,14 +3,14 @@ import {z} from 'zod'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as React from "react";
-import {useCallback} from "react";
-import {cn} from '@/lib/utils.ts'
+import {useCallback, useEffect} from "react";
+import {cn} from '@/lib/utils'
 
-import {Button} from "@/components/ui/button.tsx";
-import {Card, CardContent} from "@/components/ui/card.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
-import {InputPassword} from "@/components/auth/InputPassword.tsx";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {InputPassword} from "@/components/auth/InputPassword";
 
 import {loginBanner} from '@/assets'
 import {LoaderCircleIcon} from "lucide-react";
@@ -18,15 +18,16 @@ import {LoaderCircleIcon} from "lucide-react";
 import {Progress} from "@/components/ui/progress";
 
 
-import type {ActionResponse, AuthResponse} from "../../../types";
+import type {ActionResponse, AuthResponse, ValidationError} from "@/types";
+import {passwordRules} from "@/lib/passwordRules.ts";
 
-type LoginFieldName = 'email' | 'password';
+type LoginFieldName = 'email' | 'password' | 'role';
 
 
 const LOGIN_FORM = {
-    title: "Welcome back !",
-    description: "Login to your account wistant",
-    footerText: "You don't an account ?",
+    title: "Create an account",
+    description: "Enter your email below to create an account",
+    footerText: "Already have an account?",
 } as const;
 
 const formSchema = z.object({
@@ -38,56 +39,66 @@ const formSchema = z.object({
     password: z
         .string()
         .nonempty('Password is required')
-        .min(8, 'Password must be less than 50 characters long'),
+        .min(8, 'Password must be at least 8 characters long'),
+    role: z.enum(['user', 'admin']),
 });
 
 
-const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
+export const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
     const navigate = useNavigate();
     const fetcher = useFetcher();
     const loginResponse = fetcher.data as ActionResponse<AuthResponse>;
 
     const isLoading = fetcher.state !== 'idle';
 
-    const [progress, setProgress] = React.useState(0)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: '',
             password: '',
+            role: 'user',
         }
     })
-    React.useEffect(() => {
-        const subscription = form.watch((values) => {
-            let count = 0;
 
-            if (formSchema.shape.email.safeParse(values.email).success) {
-                count += 1;
-            }
+    // handle server error response
+    useEffect(() => {
+        if (!loginResponse) return;
+        if (loginResponse.ok) {
+            navigate('/', {viewTransition: true});
+            return;
+        }
 
-            if (formSchema.shape.password.safeParse(values.password).success) {
-                count += 1;
-            }
+        if (!loginResponse.err) return;
 
-            setProgress((count / 2) * 100);
-        });
+        if (loginResponse.err.code !== 'ValidationError') {
+            const validationErrors = loginResponse.err as ValidationError;
 
-        return () => subscription.unsubscribe();
-    }, [form]);
+            Object.entries(validationErrors.errors).forEach((value) => {
+                const [, validationError] = value;
+                const loginField = validationError.path as LoginFieldName;
 
-    const passwordRules = [
-        {test: (val: string) => val.length <= 50, label: "Max 50 characters"},
-        {test: (val: string) => /[A-Z]/.test(val), label: "At least one uppercase"},
-        {test: (val: string) => /[0-9]/.test(val), label: "At least one number"},
-        {test: (val: string) => val.length >= 8, label: "At least 8 characters"},
-    ]
+                form.setError(
+                    loginField,
+                    {
+                        type: 'custom',
+                        message: validationError.msg,
+                    },
+                    {shouldFocus: true},
+                )
+            })
+        }
 
+    }, [loginResponse]);
 
-
+    // handle of form submission
     const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
-    } , [])
+        await fetcher.submit(values, {
+            action: '/login',
+            method: 'post',
+            encType: 'application/json',
+        });
+    }, [])
 
     return (
         <div
@@ -174,12 +185,6 @@ const LoginForm = ({className, ...props}: React.ComponentProps<'div'>) => {
                                        )
                                    }}
                                />
-
-
-                               {/*<Progress*/}
-                               {/*    value={progress}*/}
-                               {/*    className={'w-full h-2'}*/}
-                               {/*/>*/}
 
                                <Button
                                    type="submit"
